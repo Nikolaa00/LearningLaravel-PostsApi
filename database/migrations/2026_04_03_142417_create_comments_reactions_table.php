@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reactions_comments', function (Blueprint $table) {
+        Schema::create('comments_reactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('comment_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reactions_comments');
+        Schema::dropIfExists('comments_reactions');
     }
 };
