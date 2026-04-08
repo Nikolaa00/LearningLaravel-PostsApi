@@ -3,6 +3,7 @@ namespace App\Http\Services;
 
 use App\Models\Post;
 use App\Models\User;
+use \Illuminate\Database\Eloquent\ModelNotFoundException as EloquentModelNotFoundException;
 
 class PostService
 {
@@ -10,22 +11,27 @@ class PostService
     {
         return Post::latest()->get();
     }
-    public function getById( int $id)
+    public function getById(int $id)
     {
-        return Post::findOrFail($id);
+        try {
+            return Post::findOrFail($id);
+        } catch (EloquentModelNotFoundException $e) {
+            abort(404, 'Post not found');
+        }
     }
     public function create(array $data)
     {
         return Post::create($data);
     }
-    public function update(int $id, array $data){
-        $post=Post::findOrFail($id);
+    public function update(int $id, array $data)
+    {
+        $post = $this->getById($id);
         $post->update($data);
         return $post;
     }
     public function delete($id)
     {
-        $post = Post::findOrFail($id);
+        $post = $this->getById($id);
         $post->delete();
     }
 }
