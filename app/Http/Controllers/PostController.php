@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Http\Services\PostService;
-
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
 {
@@ -20,15 +21,9 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $data = [
-            'title' => $request->title,
-            'post_content' => $request->post_content,
-            'user_id' => $request->user_id,
-        ];
-
-        $post = $this->postService->create($data);
+        $post = $this->postService->create($request->validated());
         return response()->json($post, 201);
     }
 
@@ -37,11 +32,9 @@ class PostController extends Controller
         $post = $this->postService->getById($id);
         return response()->json($post);
     }
-    public function update(Request $request, $id)
+    public function update(UpdatePostRequest $request, $id)
     {
-        $data = $request->only(['title', 'post_content']);
-
-        $post = $this->postService->update($id, $data);
+        $post = $this->postService->update($id, $request->validated());
         return response()->json($post);
     }
     public function destroy($id)
