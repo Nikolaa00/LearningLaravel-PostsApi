@@ -13,12 +13,14 @@ class CommentReactionService
             ['emoji' => $data['emoji']]
         );
     }
+
     public function removeReaction(int $commentId, array $data)
     {
         return CommentReaction::where('comment_id', $commentId)
             ->where('user_id', $data['user_id'])
             ->delete();
     }
+    
     public function getReactions(int $commentId)
     {
         return CommentReaction::where('comment_id', $commentId)

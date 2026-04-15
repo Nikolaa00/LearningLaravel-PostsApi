@@ -11,10 +11,12 @@ use App\Http\Requests\RemoveReactionRequest;
 class PostReactionController extends Controller
 {
     private $postReactionService;
+
     public function __construct(PostReactionService $postReactionService)
     {
         $this->postReactionService = $postReactionService;
     }
+
     public function react(StorePostReactionRequest $request, int $postId)
     {
         $reaction = $this->postReactionService->react($postId, $request->validated());
@@ -39,7 +41,6 @@ class PostReactionController extends Controller
         $reactions = $this->postReactionService->getReactions($postId);
 
         return response()->json([
-            'message' => 'Post reactions fetched successfully',
             'data' => $reactions
         ], 200);
     }

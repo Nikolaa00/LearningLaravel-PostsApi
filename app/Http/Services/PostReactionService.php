@@ -12,12 +12,14 @@ class PostReactionService
             ['emoji' => $data['emoji']]
         );
     }
+    
     public function removeReaction(int $postId, array $data)
     {
         return PostReaction::where('post_id', $postId)
             ->where('user_id', $data['user_id'])
             ->delete();
     }
+
     public function getReactions(int $postId)
     {
         return PostReaction::where('post_id', $postId)

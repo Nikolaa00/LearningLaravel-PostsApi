@@ -11,10 +11,12 @@ use App\Http\Requests\RemoveReactionRequest;
 class CommentReactionController extends Controller
 {
     private $commentReactionService;
+
     public function __construct(CommentReactionService $commentReactionService)
     {
         $this->commentReactionService = $commentReactionService;
     }
+
     public function react(StoreCommentReactionRequest $request, int $commentId)
     {
         $reaction = $this->commentReactionService->react($commentId, $request->validated());
@@ -39,7 +41,6 @@ class CommentReactionController extends Controller
         $reactions = $this->commentReactionService->getReactions($commentId);
 
         return response()->json([
-            'message' => 'Comment reactions fetched successfully',
             'data' => $reactions
         ], 200);
     }
