@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Services\CommentService;
-
+use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
+use App\Http\Requests\ReplyCommentRequest;
 class CommentController extends Controller
 {
     private $commentService;
@@ -17,14 +19,10 @@ class CommentController extends Controller
         $posts = $this->commentService->getAll();
         return response()->json($posts, 200);
     }
-    public function store(Request $request)
+    public function store(StoreCommentRequest $request)
     {
-        $commentData = [
-            'comment_content' => $request->comment_content,
-            'user_id' => $request->user_id,
-            'post_id' => $request->post_id,
-        ];
-        $newComment = $this->commentService->create($commentData);
+        
+        $newComment = $this->commentService->create($request->validated());
         return response()->json([
             'message' => 'Comment created successfully',
             'comment' => $newComment
@@ -35,23 +33,22 @@ class CommentController extends Controller
         $comment = $this->commentService->getById($id);
         return response()->json($comment, 200);
     }
-    public function update(Request $request, $id)
+    public function update(UpdateCommentRequest $request, int $id)
     {
-        $this->commentService->update($request->only(['comment_content']), $id);
+        $this->commentService->update($request->validated(), $id);
         return response()->json([
             'message' => 'Comment updated successfully',
             'content' => $this->commentService->getById($id)
         ], 200);
     }
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $this->commentService->delete($id);
         return response()->json(['message' => 'Comment deleted successfully'], 200);
     }
-    public function reply(Request $request, int $commentId)
+    public function reply(ReplyCommentRequest $request, int $commentId)
     {
-        $replyData = $request->only(['comment_content', 'user_id']);
-        $reply = $this->commentService->replyToComment($replyData, $commentId);
+        $reply = $this->commentService->replyToComment($request->validated(), $commentId);
         return response()->json([
             'content' => $reply,
             'message' => 'Reply created successfully'
