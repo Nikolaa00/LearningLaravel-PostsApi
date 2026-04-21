@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RemoveReactionRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,15 +23,18 @@ class RemoveReactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer|exists:users,id'
+            "email" => "required|email",
+            "password" => "required|string|min:6",
         ];
     }
     public function messages(): array
     {
         return [
-            'user_id.required' => 'User ID is required.',
-            'user_id.integer' => 'User ID must be an integer.',
-            'user_id.exists' => 'The specified user does not exist.'
+            'email.required' => 'The email field is required.',
+            'email.email' => 'The email must be a valid email address.',
+            'password.required' => 'The password field is required.',
+            'password.string' => 'The password must be a string.',
+            'password.min' => 'The password must be at least 6 characters.',
         ];
     }
 }
