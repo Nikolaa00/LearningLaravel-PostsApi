@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Reaction;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use App\Enums\ReactionEmoji;
 
-class UpdateCommentRequest extends FormRequest
+class StoreCommentReactionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,18 +22,19 @@ class UpdateCommentRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
+    
     public function rules(): array
     {
         return [
-            'comment_content' => 'required|string|min:2',
+            'emoji' => ['required', new Enum(ReactionEmoji::class)]
         ];
     }
+
     public function messages(): array
     {
         return [
-            'comment_content.required' => 'The comment content field is required.',
-            'comment_content.string' => 'The comment content must be a string.',
-            'comment_content.min' => 'The comment content must be at least 5 characters.',
+            'emoji.required' => 'Emoji is required.',
+            'emoji.enum' => 'Invalid emoji selected.',
         ];
     }
 }

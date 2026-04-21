@@ -2,6 +2,7 @@
 namespace App\Http\Services;
 
 use App\Models\Comment;
+use App\Models\User;
 use \Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 class CommentService
 {
@@ -35,7 +36,7 @@ class CommentService
         $comment = $this->getById($id);
         $comment->delete();
     }
-    public function replyToComment(array $data, int $commentId)
+    public function replyToComment(array $data, int $commentId,User $user)
     {
         $parentComment = $this->getById($commentId);
 
@@ -45,7 +46,7 @@ class CommentService
 
         return Comment::create([
             'post_id' => $parentComment->post_id,
-            'user_id' => $data['user_id'],
+            'user_id' => $user->id,
             'parent_comment_id' => $parentComment->id,
             'comment_content' => $data['comment_content'],
         ]);

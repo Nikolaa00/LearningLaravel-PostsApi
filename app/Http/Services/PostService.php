@@ -11,13 +11,9 @@ class PostService
     {
         return Post::latest()->get();
     }
-    public function getById(int $id)
+    public function getById(int $id)// check this 
     {
-        try {
-            return Post::findOrFail($id);
-        } catch (EloquentModelNotFoundException $e) {
-            abort(404, 'Post not found');
-        }
+        return Post::findOrFail($id);
     }
     public function create(array $data)
     {

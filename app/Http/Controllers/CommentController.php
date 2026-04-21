@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Services\CommentService;
-use App\Http\Requests\StoreCommentRequest;
-use App\Http\Requests\UpdateCommentRequest;
-use App\Http\Requests\ReplyCommentRequest;
+use App\Http\Requests\Comment\StoreCommentRequest;
+use App\Http\Requests\Comment\UpdateCommentRequest;
+use App\Http\Requests\Comment\ReplyCommentRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\Comment;
 class CommentController extends Controller
 {
+    use AuthorizesRequests;
     private $commentService;
     public function __construct(CommentService $commentService)
     {
@@ -21,8 +24,10 @@ class CommentController extends Controller
     }
     public function store(StoreCommentRequest $request)
     {
-        
-        $newComment = $this->commentService->create($request->validated());
+        $this->authorize('create', Comment::class);
+
+        $data = $request->validated() + ['user_id' => $request->user()->id];
+        $newComment = $this->commentService->create($data);
         return response()->json([
             'message' => 'Comment created successfully',
             'comment' => $newComment
@@ -35,20 +40,28 @@ class CommentController extends Controller
     }
     public function update(UpdateCommentRequest $request, int $id)
     {
-        $this->commentService->update($request->validated(), $id);
+        $comment = $this->commentService->getById($id);
+        $this->authorize('update', $comment);
+
+        $updated = $this->commentService->update($request->validated(), $id);
+
         return response()->json([
             'message' => 'Comment updated successfully',
-            'content' => $this->commentService->getById($id)
+            'content' => $updated
         ], 200);
     }
     public function destroy(int $id)
     {
-        $this->commentService->delete($id);
+        $comment = $this->commentService->getById($id);
+        $this->authorize('delete', $comment);
         return response()->json(['message' => 'Comment deleted successfully'], 200);
     }
     public function reply(ReplyCommentRequest $request, int $commentId)
     {
-        $reply = $this->commentService->replyToComment($request->validated(), $commentId);
+        $parentComment = $this->commentService->getById($commentId);
+        $this->authorize('reply', $parentComment);
+
+        $reply = $this->commentService->replyToComment($request->validated(), $commentId, $request->user());
         return response()->json([
             'content' => $reply,
             'message' => 'Reply created successfully'

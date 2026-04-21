@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Reaction;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 use App\Enums\ReactionEmoji;
 
-class StoreCommentReactionRequest extends FormRequest
+class StorePostReactionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,20 +22,17 @@ class StoreCommentReactionRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    
+
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'emoji' => ['required', new Enum(ReactionEmoji::class)]
         ];
     }
-
+    
     public function messages(): array
     {
         return [
-            'user_id.required' => 'User ID is required.',
-            'user_id.exists' => 'The specified user does not exist.',
             'emoji.required' => 'Emoji is required.',
             'emoji.enum' => 'Invalid emoji selected.',
         ];
